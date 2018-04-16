@@ -405,22 +405,25 @@ class OneSubjectJobSubmitter(one_subject_job_submitter.OneSubjectJobSubmitter):
         # submit an additional freesurfer assessor job
 
         standard_process_data_jobno, all_process_data_jobs = super().submit_process_data_jobs(stage, prior_job)
+		
+		# Skipping Assessor
+        module_logger.info("freesurfer assessor job skipped")
+        return standard_process_data_jobno, all_process_data_jobs
+        #if stage >= ccf_processing_stage.ProcessingStage.PROCESS_DATA:
+        #    if standard_process_data_jobno:
+        #        fs_submit_cmd = 'qsub -W depend=afterok:' + standard_process_data_jobno + ' ' + self.freesurfer_assessor_script_name
+        #    else:
+        #        fs_submit_cmd = 'qsub ' + self.freesurfer_assessor_script_name
 
-        if stage >= ccf_processing_stage.ProcessingStage.PROCESS_DATA:
-            if standard_process_data_jobno:
-                fs_submit_cmd = 'qsub -W depend=afterok:' + standard_process_data_jobno + ' ' + self.freesurfer_assessor_script_name
-            else:
-                fs_submit_cmd = 'qsub ' + self.freesurfer_assessor_script_name
+        #    completed_submit_process = subprocess.run(
+        #        fs_submit_cmd, shell=True, check=True, stdout=subprocess.PIPE, universal_newlines=True)
+        #    fs_job_no = str_utils.remove_ending_new_lines(completed_submit_process.stdout)
+        #    all_process_data_jobs.append(fs_job_no)
+        #    return fs_job_no, all_process_data_jobs
 
-            completed_submit_process = subprocess.run(
-                fs_submit_cmd, shell=True, check=True, stdout=subprocess.PIPE, universal_newlines=True)
-            fs_job_no = str_utils.remove_ending_new_lines(completed_submit_process.stdout)
-            all_process_data_jobs.append(fs_job_no)
-            return fs_job_no, all_process_data_jobs
-
-        else:
-            module_logger.info("freesurfer assessor job not submitted")
-            return standard_process_data_jobno, all_process_data_jobs
+        #else:
+        #    module_logger.info("freesurfer assessor job not submitted")
+        #    return standard_process_data_jobno, all_process_data_jobs
 
     def mark_running_status(self, stage):
         module_logger.debug(debug_utils.get_name())
