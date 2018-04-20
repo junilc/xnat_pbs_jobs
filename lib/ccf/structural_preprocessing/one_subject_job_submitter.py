@@ -116,10 +116,10 @@ class OneSubjectJobSubmitter(one_subject_job_submitter.OneSubjectJobSubmitter):
     def TOPUP_CONFIG_FILE_NAME(self):
         return "b02b0.cnf"
 
-    @property
-    def freesurfer_assessor_script_name(self):
-        module_logger.debug(debug_utils.get_name())
-        return self.scripts_start_name + '.XNAT_CREATE_FREESURFER_ASSESSOR_job.sh'
+    # @property
+    # def freesurfer_assessor_script_name(self):
+        # module_logger.debug(debug_utils.get_name())
+        # return self.scripts_start_name + '.XNAT_CREATE_FREESURFER_ASSESSOR_job.sh'
 
     def create_get_data_job_script(self):
         """Create the script to be submitted to perform the get data job"""
@@ -295,7 +295,8 @@ class OneSubjectJobSubmitter(one_subject_job_submitter.OneSubjectJobSubmitter):
         resources_line = '#PBS -l nodes=' + str(self.WORK_NODE_COUNT)
         resources_line += ':ppn=' + str(self.WORK_PPN)
         resources_line += ',walltime=' + walltime_limit_str
-        resources_line += ',vmem=' + vmem_limit_str
+        #resources_line += ',vmem=' + vmem_limit_str
+        resources_line += ',mem=' + vmem_limit_str
 
         stdout_line = '#PBS -o ' + self.working_directory_name
         stderr_line = '#PBS -e ' + self.working_directory_name
@@ -399,93 +400,93 @@ class OneSubjectJobSubmitter(one_subject_job_submitter.OneSubjectJobSubmitter):
 
             os.chmod(script_name, stat.S_IRWXU | stat.S_IRWXG)
 
-    def create_freesurfer_assessor_script(self):
-        module_logger.debug(debug_utils.get_name())
+    # def create_freesurfer_assessor_script(self):
+        # module_logger.debug(debug_utils.get_name())
 
-        # copy the .XNAT_CREATE_FREESURFER_ASSESSOR script to the working directory
-        freesurfer_assessor_source_path = self.xnat_pbs_jobs_home
-        freesurfer_assessor_source_path += os.sep + self.PIPELINE_NAME
-        freesurfer_assessor_source_path += os.sep + self.PIPELINE_NAME
-        freesurfer_assessor_source_path += '.XNAT_CREATE_FREESURFER_ASSESSOR'
+        # # copy the .XNAT_CREATE_FREESURFER_ASSESSOR script to the working directory
+        # freesurfer_assessor_source_path = self.xnat_pbs_jobs_home
+        # freesurfer_assessor_source_path += os.sep + self.PIPELINE_NAME
+        # freesurfer_assessor_source_path += os.sep + self.PIPELINE_NAME
+        # freesurfer_assessor_source_path += '.XNAT_CREATE_FREESURFER_ASSESSOR'
 
-        freesurfer_assessor_dest_path = self.working_directory_name
-        freesurfer_assessor_dest_path += os.sep + self.PIPELINE_NAME
-        freesurfer_assessor_dest_path += '.XNAT_CREATE_FREESURFER_ASSESSOR'
+        # freesurfer_assessor_dest_path = self.working_directory_name
+        # freesurfer_assessor_dest_path += os.sep + self.PIPELINE_NAME
+        # freesurfer_assessor_dest_path += '.XNAT_CREATE_FREESURFER_ASSESSOR'
 
-        shutil.copy(freesurfer_assessor_source_path, freesurfer_assessor_dest_path)
-        os.chmod(freesurfer_assessor_dest_path, stat.S_IRWXU | stat.S_IRWXG)
+        # shutil.copy(freesurfer_assessor_source_path, freesurfer_assessor_dest_path)
+        # os.chmod(freesurfer_assessor_dest_path, stat.S_IRWXU | stat.S_IRWXG)
 
-        # write the freesurfer assessor submission script (that calls the .XNAT_CREATE_FREESURFER_ASSESSOR script)
+        # # write the freesurfer assessor submission script (that calls the .XNAT_CREATE_FREESURFER_ASSESSOR script)
 
-        script_name = self.freesurfer_assessor_script_name
+        # script_name = self.freesurfer_assessor_script_name
 
-        with contextlib.suppress(FileNotFoundError):
-            os.remove(script_name)
+        # with contextlib.suppress(FileNotFoundError):
+            # os.remove(script_name)
 
-        script = open(script_name, 'w')
+        # script = open(script_name, 'w')
 
-        self._write_bash_header(script)
-        script.write('#PBS -l nodes=1:ppn=1,walltime=4:00:00,vmem=4gb' + os.linesep)
-        script.write('#PBS -o ' + self.working_directory_name + os.linesep)
-        script.write('#PBS -e ' + self.working_directory_name + os.linesep)
-        script.write(os.linesep)
+        # self._write_bash_header(script)
+        # script.write('#PBS -l nodes=1:ppn=1,walltime=4:00:00,vmem=4gb' + os.linesep)
+        # script.write('#PBS -o ' + self.working_directory_name + os.linesep)
+        # script.write('#PBS -e ' + self.working_directory_name + os.linesep)
+        # script.write(os.linesep)
 
-        script_line    = freesurfer_assessor_dest_path
-        user_line      = '  --user='        + self.username
-        password_line  = '  --password='    + self.password
-        server_line    = '  --server='      + str_utils.get_server_name(self.server)
-        project_line   = '  --project='     + self.project
-        subject_line   = '  --subject='     + self.subject
-        session_line   = '  --session='     + self.session
-        session_classifier_line = '  --session-classifier=' + self.classifier
-        wdir_line      = '  --working-dir=' + self.working_directory_name
+        # script_line    = freesurfer_assessor_dest_path
+        # user_line      = '  --user='        + self.username
+        # password_line  = '  --password='    + self.password
+        # server_line    = '  --server='      + str_utils.get_server_name(self.server)
+        # project_line   = '  --project='     + self.project
+        # subject_line   = '  --subject='     + self.subject
+        # session_line   = '  --session='     + self.session
+        # session_classifier_line = '  --session-classifier=' + self.classifier
+        # wdir_line      = '  --working-dir=' + self.working_directory_name
 
-        script.write(script_line   + ' \\' + os.linesep)
-        script.write(user_line     + ' \\' + os.linesep)
-        script.write(password_line + ' \\' + os.linesep)
-        script.write(server_line + ' \\' + os.linesep)
-        script.write(project_line + ' \\' + os.linesep)
-        script.write(subject_line + ' \\' + os.linesep)
-        script.write(session_line + ' \\' + os.linesep)
-        script.write(session_classifier_line + ' \\' + os.linesep)
-        script.write(wdir_line + os.linesep)
+        # script.write(script_line   + ' \\' + os.linesep)
+        # script.write(user_line     + ' \\' + os.linesep)
+        # script.write(password_line + ' \\' + os.linesep)
+        # script.write(server_line + ' \\' + os.linesep)
+        # script.write(project_line + ' \\' + os.linesep)
+        # script.write(subject_line + ' \\' + os.linesep)
+        # script.write(session_line + ' \\' + os.linesep)
+        # script.write(session_classifier_line + ' \\' + os.linesep)
+        # script.write(wdir_line + os.linesep)
 
-        script.close()
-        os.chmod(script_name, stat.S_IRWXU | stat.S_IRWXG)
+        # script.close()
+        # os.chmod(script_name, stat.S_IRWXU | stat.S_IRWXG)
 
-    def create_scripts(self, stage):
-        module_logger.debug(debug_utils.get_name())
-        super().create_scripts(stage)
+    # def create_scripts(self, stage):
+        # module_logger.debug(debug_utils.get_name())
+        # super().create_scripts(stage)
 
-        if stage >= ccf_processing_stage.ProcessingStage.PREPARE_SCRIPTS:
-            self.create_freesurfer_assessor_script()
+        # if stage >= ccf_processing_stage.ProcessingStage.PREPARE_SCRIPTS:
+            # self.create_freesurfer_assessor_script()
 
-    def submit_process_data_jobs(self, stage, prior_job=None):
-        module_logger.debug(debug_utils.get_name())
+    # def submit_process_data_jobs(self, stage, prior_job=None):
+        # module_logger.debug(debug_utils.get_name())
 
-        # go ahead and submit the standard process data job and then
-        # submit an additional freesurfer assessor job
+        # # go ahead and submit the standard process data job and then
+        # # submit an additional freesurfer assessor job
 
-        standard_process_data_jobno, all_process_data_jobs = super().submit_process_data_jobs(stage, prior_job)
+        # standard_process_data_jobno, all_process_data_jobs = super().submit_process_data_jobs(stage, prior_job)
 		
-		# Skipping Assessor
-        module_logger.info("freesurfer assessor job skipped")
-        return standard_process_data_jobno, all_process_data_jobs
-        #if stage >= ccf_processing_stage.ProcessingStage.PROCESS_DATA:
-        #    if standard_process_data_jobno:
-        #        fs_submit_cmd = 'qsub -W depend=afterok:' + standard_process_data_jobno + ' ' + self.freesurfer_assessor_script_name
-        #    else:
-        #        fs_submit_cmd = 'qsub ' + self.freesurfer_assessor_script_name
+		# # Skipping Assessor
+        # module_logger.info("freesurfer assessor job skipped")
+        # return standard_process_data_jobno, all_process_data_jobs
+        # #if stage >= ccf_processing_stage.ProcessingStage.PROCESS_DATA:
+        # #    if standard_process_data_jobno:
+        # #        fs_submit_cmd = 'qsub -W depend=afterok:' + standard_process_data_jobno + ' ' + self.freesurfer_assessor_script_name
+        # #    else:
+        # #        fs_submit_cmd = 'qsub ' + self.freesurfer_assessor_script_name
 
-        #    completed_submit_process = subprocess.run(
-        #        fs_submit_cmd, shell=True, check=True, stdout=subprocess.PIPE, universal_newlines=True)
-        #    fs_job_no = str_utils.remove_ending_new_lines(completed_submit_process.stdout)
-        #    all_process_data_jobs.append(fs_job_no)
-        #    return fs_job_no, all_process_data_jobs
+        # #    completed_submit_process = subprocess.run(
+        # #        fs_submit_cmd, shell=True, check=True, stdout=subprocess.PIPE, universal_newlines=True)
+        # #    fs_job_no = str_utils.remove_ending_new_lines(completed_submit_process.stdout)
+        # #    all_process_data_jobs.append(fs_job_no)
+        # #    return fs_job_no, all_process_data_jobs
 
-        #else:
-        #    module_logger.info("freesurfer assessor job not submitted")
-        #    return standard_process_data_jobno, all_process_data_jobs
+        # #else:
+        # #    module_logger.info("freesurfer assessor job not submitted")
+        # #    return standard_process_data_jobno, all_process_data_jobs
 
     def mark_running_status(self, stage):
         module_logger.debug(debug_utils.get_name())
