@@ -3,6 +3,8 @@
 # import of built-in modules
 import platform
 import os
+import sys
+import ccf.subject as ccf_subject
 
 # import of third-party modules
 
@@ -55,3 +57,19 @@ class OneSubjectRunStatusChecker(one_subject_run_status_checker.OneSubjectRunSta
 
         return None
     
+if __name__ == "__main__":
+    subject = ccf_subject.SubjectInfo(sys.argv[1], sys.argv[2], sys.argv[3])
+    status_checker = OneSubjectRunStatusChecker()	
+    if status_checker.get_queued_or_running(subject):
+        print("-----")
+        print("project: " + subject.project)
+        print("subject: " + subject.subject_id)
+        print("session classifier: " + subject.classifier)
+        print("JOB IS ALREADY QUEUED OR RUNNING")
+    else:
+        print ("-----")		
+        print("project: " + subject.project)
+        print("subject: " + subject.subject_id)
+        print("session classifier: " + subject.classifier)
+        print("JOB IS NOT RUNNING")
+  

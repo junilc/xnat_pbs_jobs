@@ -6,6 +6,10 @@
 
 # import of local modules
 import ccf.one_subject_prereq_checker
+import ccf.subject as ccf_subject
+import ccf.archive as ccf_archive
+import sys
+import utils.my_argparse as my_argparse
 
 # authorship information
 __author__ = "Timothy B. Brown"
@@ -36,3 +40,26 @@ class OneSubjectPrereqChecker(ccf.one_subject_prereq_checker.OneSubjectPrereqChe
         # at least 1 T2w unprocessed resource exist
         return (count_of_t1w_resources > 0) and (count_of_t2w_resources > 0)
 
+if __name__ == "__main__":
+    parser = my_argparse.MyArgumentParser(description="Program to check prerequisites for the Structural Preprocessing.")
+    # mandatory arguments
+    parser.add_argument('-p', '--project', dest='project', required=True, type=str)
+    parser.add_argument('-s', '--subject', dest='subject', required=True, type=str)
+    parser.add_argument('-c', '--classifier', dest='classifier', required=True, type=str)
+
+    # parse the command line arguments
+    args = parser.parse_args()
+    #args, unknown = parser.parse_known_args()
+    #print(args)
+    #print(unknown)
+	
+    archive = ccf_archive.CcfArchive()
+    subject = ccf_subject.SubjectInfo(args.project, args.subject, args.classifier)
+    #subject = ccf_subject.SubjectInfo(sys.argv[1], sys.argv[2], sys.argv[3])
+    prereq_checker = OneSubjectPrereqChecker()
+    print("checking subject: " + str(subject), end=" - ")
+
+    if (prereq_checker.are_prereqs_met(archive, subject, True)):
+        print("Prerequisites Met")
+    else:
+        print("Prerequisites NOT Met")

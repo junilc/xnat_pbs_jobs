@@ -8,7 +8,8 @@ import os
 import shutil
 import stat
 import subprocess
-
+import sys
+import random
 # import of third-party modules
 
 # import of local modules
@@ -17,6 +18,11 @@ import ccf.processing_stage as ccf_processing_stage
 import ccf.subject as ccf_subject
 import utils.debug_utils as debug_utils
 import utils.str_utils as str_utils
+import utils.os_utils as os_utils
+import utils.user_utils as user_utils
+import ccf.archive as ccf_archive
+import utils.file_utils as file_utils
+import utils.my_configparser as my_configparser
 
 # authorship information
 __author__ = "Timothy B. Brown"
@@ -547,3 +553,95 @@ class OneSubjectJobSubmitter(one_subject_job_submitter.OneSubjectJobSubmitter):
             print(completed_mark_cmd_process.stdout)
             
             return
+
+
+if __name__ == "__main__":
+    import ccf.structural_preprocessing.one_subject_run_status_checker as one_subject_run_status_checker
+
+    xnat_server = os_utils.getenv_required('XNAT_PBS_JOBS_XNAT_SERVER')
+    username, password = user_utils.get_credentials(xnat_server)
+    archive = ccf_archive.CcfArchive()	
+	
+    subject = ccf_subject.SubjectInfo(sys.argv[1], sys.argv[2], sys.argv[3])
+    submitter = OneSubjectJobSubmitter(archive, archive.build_home)
+    
+    config_file_name = file_utils.get_config_file_name(__file__)
+    print("Reading configuration from file: " + config_file_name)
+    config = my_configparser.MyConfigParser()
+    config.read(config_file_name)	
+
+    run_status_checker = one_subject_run_status_checker.OneSubjectRunStatusChecker()
+    if run_status_checker.get_queued_or_running(subject):
+        print("-----")
+        print("NOT SUBMITTING JOBS FOR")
+        print("project: " + subject.project)
+        print("subject: " + subject.subject_id)
+        print("session classifier: " + subject.classifier)
+        print("JOBS ARE ALREADY QUEUED OR RUNNING")
+        print ('Process terminated')
+        sys.exit()	
+		
+    min_shadow_str = os_utils.getenv_required("XNAT_PBS_JOBS_MIN_SHADOW")
+    max_shadow_str = os_utils.getenv_required("XNAT_PBS_JOBS_MAX_SHADOW")
+    random_shadow = (random.randint(int(min_shadow_str), int(max_shadow_str)))
+	
+    job_submitter=OneSubjectJobSubmitter(archive, archive.build_home)	
+    put_server = 'http://intradb-shadow'
+    put_server += str(random_shadow)
+    put_server += '.nrg.mir:8080'
+
+    # get information for the subject from the configuration
+    clean_output_first = config.get_bool_value(subject.subject_id, 'CleanOutputFirst')
+    processing_stage_str = config.get_value(subject.subject_id, 'ProcessingStage')
+    processing_stage = submitter.processing_stage_from_string(processing_stage_str)
+    walltime_limit_hrs = config.get_value(subject.subject_id, 'WalltimeLimitHours')
+    vmem_limit_gbs = config.get_value(subject.subject_id, 'VmemLimitGbs')
+    output_resource_suffix = config.get_value(subject.subject_id, 'OutputResourceSuffix')
+    brain_size = config.get_value(subject.subject_id, 'BrainSize')
+    use_prescan_normalized = config.get_bool_value(subject.subject_id, 'UsePrescanNormalized')
+	
+    print("-----")
+    print("\tSubmitting", submitter.PIPELINE_NAME, "jobs for:")
+    print("\t               project:", subject.project)
+    print("\t               subject:", subject.subject_id)
+    print("\t    session classifier:", subject.classifier)
+    print("\t            put_server:", put_server)
+    print("\t    clean_output_first:", clean_output_first)
+    print("\t      processing_stage:", processing_stage)
+    print("\t    walltime_limit_hrs:", walltime_limit_hrs)
+    print("\t        vmem_limit_gbs:", vmem_limit_gbs)
+    print("\toutput_resource_suffix:", output_resource_suffix)
+    print("\t            brain_size:", brain_size)
+    print("\tuse_prescan_normalized:", use_prescan_normalized)
+	
+    # configure one subject submitter
+            
+    # user and server information
+    submitter.username = username
+    submitter.password = password
+    submitter.server = 'https://' + os_utils.getenv_required('XNAT_PBS_JOBS_XNAT_SERVER')
+
+    # subject and project information
+    submitter.project = subject.project
+    submitter.subject = subject.subject_id
+    submitter.session = subject.subject_id + '_' + subject.classifier
+    submitter.classifier = subject.classifier
+    submitter.brain_size = brain_size
+    submitter.use_prescan_normalized = use_prescan_normalized
+            
+    # job parameters
+    submitter.clean_output_resource_first = clean_output_first
+    submitter.put_server = put_server
+    submitter.walltime_limit_hours = walltime_limit_hrs
+    submitter.vmem_limit_gbs = vmem_limit_gbs
+    submitter.output_resource_suffix = output_resource_suffix
+
+    # submit jobs
+    submitted_job_list = submitter.submit_jobs(processing_stage)
+    print("\tsubmitted jobs:", submitted_job_list)
+    print("-----")
+			
+	#job_submitter.submit_jobs(userid, password, subject, config)
+    
+    #print ('Process terminated')
+    #sys.exit()	

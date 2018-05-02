@@ -89,7 +89,7 @@ def get_logging_config_file_name(source_file_name, use_env_variable=True):
         logging_config_file_name = logging_config_file_name[:-3]
 
     logging_config_file_name += '.logging.conf'
-
+    
     if use_env_variable:
         xnat_pbs_jobs_control = os.getenv('XNAT_PBS_JOBS_CONTROL')
         if xnat_pbs_jobs_control:

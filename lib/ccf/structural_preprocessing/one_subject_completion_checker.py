@@ -1257,7 +1257,7 @@ if __name__ == "__main__":
 
     # parse the command line arguments
     args = parser.parse_args()
-
+  
     # check the specified subject for structural preprocessing completion
     archive = ccf_archive.CcfArchive()
     subject_info = ccf_subject.SubjectInfo(args.project, args.subject, args.classifier)
