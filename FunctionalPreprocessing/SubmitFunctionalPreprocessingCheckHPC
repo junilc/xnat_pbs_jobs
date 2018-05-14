@@ -1,7 +1,7 @@
 #!/bin/bash
 
-source /export/HCP/bin/xnat_pbs_setup connectomedb
-# #source /export/HCP/bin/xnat_pbs_setup intradb
+#source /export/HCP/bin/xnat_pbs_setup connectomedb
+source /export/HCP/bin/xnat_pbs_setup intradb
 export PATH=/act/Anaconda3-2.3.0/bin:${PATH}
 
 
@@ -12,5 +12,5 @@ if [ -z "${XNAT_PBS_JOBS}" ]; then
 fi
 
 source activate python3 2>/dev/null
-${XNAT_PBS_JOBS}/lib/ccf/structural_preprocessing/one_subject_completion_checker.py $@
+${XNAT_PBS_JOBS}/lib/ccf/functional_preprocessing/one_subject_completion_checker.py $@
 source deactivate 2>/dev/null

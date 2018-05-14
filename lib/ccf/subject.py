@@ -113,20 +113,12 @@ def read_subject_info_list(file_name, separator=SubjectInfo.DEFAULT_SEPARATOR())
 def read_subject_info_list_user(s_name, separator=SubjectInfo.DEFAULT_SEPARATOR()):
 
     subject_info_list = []
-    s_name = str_utils.remove_ending_new_lines(s_name)
-
-        # remove leading and trailing spaces
     s_name = s_name.strip()
-
-        # ignore blank lines and comment lines - starting with #
-    if s_name != '' and s_name[0] != '#':
-        (project, subject_id, classifier, extra) = s_name.split(separator)
-            # Make the string 'None' in the file translate to a None type instead of
-            # just the string itself
-        if extra == 'None':
-            extra = None
-        subject_info = SubjectInfo(project, subject_id, classifier, extra)
-        subject_info_list.append(subject_info)
+    (project, subject_id, classifier, extra) = s_name.split(separator)
+    if extra == 'None':
+        extra = None
+    subject_info = SubjectInfo(project, subject_id, classifier, extra)
+    subject_info_list.append(subject_info)
 
     return subject_info_list
 

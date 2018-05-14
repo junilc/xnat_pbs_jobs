@@ -1254,7 +1254,8 @@ if __name__ == "__main__":
     parser.add_argument('-o', '--output', dest='output', required=False, type=str)
     parser.add_argument('-a', '--check-all', dest='check_all', action='store_true',
                         required=False, default=False)
-
+    parser.add_argument('-m', '--marked', dest='marked', action='store_true',
+                        required=False, default=False)
     # parse the command line arguments
     args = parser.parse_args()
   
@@ -1268,14 +1269,22 @@ if __name__ == "__main__":
     else:
         processing_output = sys.stdout
 
-    if completion_checker.is_processing_complete(
-            archive=archive,
-            subject_info=subject_info,
-            verbose=args.verbose,
-            output=processing_output,
-            short_circuit=not args.check_all):
-        print("Exiting with 0 code - Completion Check Successful")
-        exit(0)
+    if args.marked:
+        if completion_checker.is_processing_marked_complete(archive=archive, subject_info=subject_info):
+            print("Exiting with 0 code - Marked Completion Check Successful")
+            exit(0)
+        else:
+            print("Exiting with 1 code - Marked Completion Check Unsuccessful")
+            exit(1)
     else:
-        print("Exiting with 1 code - Completion Check Unsuccessful")
-        exit(1)
+        if completion_checker.is_processing_complete(
+                archive=archive,
+                subject_info=subject_info,
+                verbose=args.verbose,
+                output=processing_output,
+                short_circuit=not args.check_all):
+            print("Exiting with 0 code - Completion Check Successful")
+            exit(0)
+        else:
+            print("Exiting with 1 code - Completion Check Unsuccessful")
+            exit(1)

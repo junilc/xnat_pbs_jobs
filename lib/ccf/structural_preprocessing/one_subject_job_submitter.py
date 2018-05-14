@@ -21,8 +21,8 @@ import utils.str_utils as str_utils
 import utils.os_utils as os_utils
 import utils.user_utils as user_utils
 import ccf.archive as ccf_archive
-import utils.file_utils as file_utils
-import utils.my_configparser as my_configparser
+#import utils.file_utils as file_utils
+#import utils.my_configparser as my_configparser
 
 # authorship information
 __author__ = "Timothy B. Brown"
@@ -565,10 +565,10 @@ if __name__ == "__main__":
     subject = ccf_subject.SubjectInfo(sys.argv[1], sys.argv[2], sys.argv[3])
     submitter = OneSubjectJobSubmitter(archive, archive.build_home)
     
-    config_file_name = file_utils.get_config_file_name(__file__)
-    print("Reading configuration from file: " + config_file_name)
-    config = my_configparser.MyConfigParser()
-    config.read(config_file_name)	
+    #config_file_name = file_utils.get_config_file_name(__file__)
+    #print("Reading configuration from file: " + config_file_name)
+    #config = my_configparser.MyConfigParser()
+    #config.read(config_file_name)	
 
     run_status_checker = one_subject_run_status_checker.OneSubjectRunStatusChecker()
     if run_status_checker.get_queued_or_running(subject):
@@ -591,14 +591,22 @@ if __name__ == "__main__":
     put_server += '.nrg.mir:8080'
 
     # get information for the subject from the configuration
-    clean_output_first = config.get_bool_value(subject.subject_id, 'CleanOutputFirst')
-    processing_stage_str = config.get_value(subject.subject_id, 'ProcessingStage')
+    # clean_output_first = config.get_bool_value(subject.subject_id, 'CleanOutputFirst')
+    # processing_stage_str = config.get_value(subject.subject_id, 'ProcessingStage')
+    # processing_stage = submitter.processing_stage_from_string(processing_stage_str)
+    # walltime_limit_hrs = config.get_value(subject.subject_id, 'WalltimeLimitHours')
+    # vmem_limit_gbs = config.get_value(subject.subject_id, 'VmemLimitGbs')
+    # output_resource_suffix = config.get_value(subject.subject_id, 'OutputResourceSuffix')
+    # brain_size = config.get_value(subject.subject_id, 'BrainSize')
+    # use_prescan_normalized = config.get_bool_value(subject.subject_id, 'UsePrescanNormalized')
+    clean_output_first = eval(sys.argv[4])
+    processing_stage_str = sys.argv[5]
     processing_stage = submitter.processing_stage_from_string(processing_stage_str)
-    walltime_limit_hrs = config.get_value(subject.subject_id, 'WalltimeLimitHours')
-    vmem_limit_gbs = config.get_value(subject.subject_id, 'VmemLimitGbs')
-    output_resource_suffix = config.get_value(subject.subject_id, 'OutputResourceSuffix')
-    brain_size = config.get_value(subject.subject_id, 'BrainSize')
-    use_prescan_normalized = config.get_bool_value(subject.subject_id, 'UsePrescanNormalized')
+    walltime_limit_hrs = sys.argv[6]
+    vmem_limit_gbs = sys.argv[7]
+    output_resource_suffix = sys.argv[8]
+    brain_size = sys.argv[9]
+    use_prescan_normalized = eval(sys.argv[10])	
 	
     print("-----")
     print("\tSubmitting", submitter.PIPELINE_NAME, "jobs for:")
@@ -617,8 +625,10 @@ if __name__ == "__main__":
     # configure one subject submitter
             
     # user and server information
-    submitter.username = username
-    submitter.password = password
+    # submitter.username = username
+    # submitter.password = password
+    submitter.username =  sys.argv[11]
+    submitter.password =  sys.argv[12]
     submitter.server = 'https://' + os_utils.getenv_required('XNAT_PBS_JOBS_XNAT_SERVER')
 
     # subject and project information

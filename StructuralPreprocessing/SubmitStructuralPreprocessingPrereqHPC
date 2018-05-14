@@ -1,28 +1,14 @@
 #!/bin/bash
 
-if [ -f ~/.bashrc ]; then
-	. ~/.bashrc
-fi
-
-PATH=$PATH:$HOME/bin
-export PATH
-export COMPUTE=CHPC
-export CLUSTER="2.0"
-#source /export/HCP/bin/xnat_pbs_setup connectomedb
-source /export/HCP/bin/xnat_pbs_setup intradb
-export NRG_PACKAGES=/HCP/NRG/nrgpackages
-export PERL5LIB=${NRG_PACKAGES}/tools/HCP/Freesurfer/freesurfer_includes
-export PATH=/export/HCP/ImageMagick-6.6.7/bin:${PATH}
-export XNAT_PBS_JOBS_CONTROL=${HOME}/pipeline_tools/xnat_pbs_jobs_control
+source /export/HCP/bin/xnat_pbs_setup connectomedb
+# #source /export/HCP/bin/xnat_pbs_setup intradb
 export PATH=/act/Anaconda3-2.3.0/bin:${PATH}
-
 
 if [ -z "${XNAT_PBS_JOBS}" ]; then
     script_name=$(basename "${0}")
     echo "${script_name}: ABORTING: XNAT_PBS_JOBS environment variable must be set"
     exit 1
 fi
-
 
 source activate python3 2>/dev/null
 ${XNAT_PBS_JOBS}/lib/ccf/structural_preprocessing/one_subject_prereq_checker.py $@
