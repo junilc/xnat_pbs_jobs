@@ -662,10 +662,10 @@ if __name__ == "__main__":
     # configure one subject submitter
             
     # user and server information
-    # submitter.username = username
-    # submitter.password = password
-    submitter.username =  sys.argv[11]
-    submitter.password =  sys.argv[12]
+    submitter.username = username
+    submitter.password = password
+    #submitter.username =  sys.argv[11]
+    #submitter.password =  sys.argv[12]
     submitter.server = 'https://' + os_utils.getenv_required('XNAT_PBS_JOBS_XNAT_SERVER')
 
     # subject and project information
