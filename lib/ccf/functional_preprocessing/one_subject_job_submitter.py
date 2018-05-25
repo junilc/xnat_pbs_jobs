@@ -8,6 +8,7 @@ import shutil
 import stat
 import subprocess
 import random
+import sys
 
 # import of third-party modules
 
@@ -23,7 +24,6 @@ import ccf.archive as ccf_archive
 #import utils.file_utils as file_utils
 #import utils.my_configparser as my_configparser
 
-import sys
 
 # authorship information
 __author__ = "Timothy B. Brown"
@@ -96,19 +96,19 @@ class OneSubjectJobSubmitter(one_subject_job_submitter.OneSubjectJobSubmitter):
 
 		xnat_pbs_setup_line = 'source ' + self._get_xnat_pbs_setup_script_path() + ' ' + self._get_db_name()
 
-		script_line      = processing_script_dest_path
-		user_line        = '  --user=' + self.username
-		password_line    = '  --password=' + self.password
-		server_line      = '  --server=' + str_utils.get_server_name(self.server)
-		project_line     = '  --project=' + self.project
-		subject_line     = '  --subject=' + self.subject
-		session_line     = '  --session=' + self.session
-		scan_line        = '  --scan=' + self.scan
+		script_line	  = processing_script_dest_path
+		user_line		= '  --user=' + self.username
+		password_line	= '  --password=' + self.password
+		server_line	  = '  --server=' + str_utils.get_server_name(self.server)
+		project_line	 = '  --project=' + self.project
+		subject_line	 = '  --subject=' + self.subject
+		session_line	 = '  --session=' + self.session
+		scan_line		= '  --scan=' + self.scan
 		session_classifier_line = '  --session-classifier=' + self.classifier
-		dcmethod_line    = '  --dcmethod=TOPUP'
+		dcmethod_line	= '  --dcmethod=TOPUP'
 		topupconfig_line = '  --topupconfig=b02b0.cnf'
-		gdcoeffs_line    = '  --gdcoeffs=Prisma_3T_coeff_AS82.grad'
-    
+		gdcoeffs_line	= '  --gdcoeffs=Prisma_3T_coeff_AS82.grad'
+	
 		wdir_line  = '  --working-dir=' + self.working_directory_name
 		setup_line = '  --setup-script=' + self.setup_file_name
 		
@@ -119,18 +119,18 @@ class OneSubjectJobSubmitter(one_subject_job_submitter.OneSubjectJobSubmitter):
 			script.write(os.linesep)
 			script.write(xnat_pbs_setup_line + os.linesep)
 			script.write(os.linesep)
-			script.write(script_line +      ' \\' + os.linesep)
-			script.write(user_line +        ' \\' + os.linesep)
-			script.write(password_line +    ' \\' + os.linesep)
-			script.write(server_line +      ' \\' + os.linesep)
-			script.write(project_line +     ' \\' + os.linesep)
-			script.write(subject_line +     ' \\' + os.linesep)
-			script.write(session_line +     ' \\' + os.linesep)
-			script.write(scan_line +        ' \\' + os.linesep)
+			script.write(script_line +	  ' \\' + os.linesep)
+			script.write(user_line +		' \\' + os.linesep)
+			script.write(password_line +	' \\' + os.linesep)
+			script.write(server_line +	  ' \\' + os.linesep)
+			script.write(project_line +	 ' \\' + os.linesep)
+			script.write(subject_line +	 ' \\' + os.linesep)
+			script.write(session_line +	 ' \\' + os.linesep)
+			script.write(scan_line +		' \\' + os.linesep)
 			script.write(session_classifier_line + ' \\' + os.linesep)
-			script.write(dcmethod_line +    ' \\' + os.linesep)
+			script.write(dcmethod_line +	' \\' + os.linesep)
 			script.write(topupconfig_line + ' \\' + os.linesep)
-			script.write(gdcoeffs_line +    ' \\' + os.linesep)
+			script.write(gdcoeffs_line +	' \\' + os.linesep)
 			script.write(wdir_line + ' \\' + os.linesep)
 			script.write(setup_line + os.linesep)
 			
@@ -167,7 +167,7 @@ if __name__ == "__main__":
 	archive = ccf_archive.CcfArchive()	
 	subject = ccf_subject.SubjectInfo(sys.argv[1], sys.argv[2], sys.argv[3], sys.argv[4])
 	submitter = OneSubjectJobSubmitter(archive, archive.build_home)	
-	
+
 	#config_file_name = file_utils.get_config_file_name(__file__)
 	#print("Reading configuration from file: " + config_file_name)
 	#config = my_configparser.MyConfigParser()
@@ -176,6 +176,7 @@ if __name__ == "__main__":
 	run_status_checker = one_subject_run_status_checker.OneSubjectRunStatusChecker()
 	
 	#if run_status_checker.get_queued_or_running(subject):
+
 	if run_status_checker.get_queued_or_running(subject):
 		print("-----")
 		print("NOT SUBMITTING JOBS FOR")
@@ -196,12 +197,14 @@ if __name__ == "__main__":
 	put_server += str(random_shadow)
 	put_server += '.nrg.mir:8080'
 
+
 	# clean_output_first = config.get_bool_value(subject.subject_id, 'CleanOutputFirst')
 	# processing_stage_str = config.get_value(subject.subject_id, 'ProcessingStage')
 	# processing_stage = submitter.processing_stage_from_string(processing_stage_str)
 	# walltime_limit_hrs = config.get_value(subject.subject_id, 'WalltimeLimitHours')
 	# vmem_limit_gbs = config.get_value(subject.subject_id, 'VmemLimitGbs')
 	# output_resource_suffix = config.get_value(subject.subject_id, 'OutputResourceSuffix')
+
 	clean_output_first = eval(sys.argv[5])
 	processing_stage_str = sys.argv[6]
 	processing_stage = submitter.processing_stage_from_string(processing_stage_str)

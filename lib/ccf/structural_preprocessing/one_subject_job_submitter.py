@@ -19,7 +19,6 @@ import ccf.subject as ccf_subject
 import utils.debug_utils as debug_utils
 import utils.os_utils as os_utils
 import utils.str_utils as str_utils
-import utils.os_utils as os_utils
 import utils.user_utils as user_utils
 import ccf.archive as ccf_archive
 #import utils.file_utils as file_utils
@@ -582,7 +581,7 @@ class OneSubjectJobSubmitter(one_subject_job_submitter.OneSubjectJobSubmitter):
 			print(completed_mark_cmd_process.stdout)
 			
 			return
-			
+
 if __name__ == "__main__":
 	import ccf.structural_preprocessing.one_subject_run_status_checker as one_subject_run_status_checker
 
@@ -617,6 +616,7 @@ if __name__ == "__main__":
 	put_server = 'http://intradb-shadow'
 	put_server += str(random_shadow)
 	put_server += '.nrg.mir:8080'
+
 
 	# get information for the subject from the configuration
 	# clean_output_first = config.get_bool_value(subject.subject_id, 'CleanOutputFirst')
@@ -657,6 +657,7 @@ if __name__ == "__main__":
 	submitter.password = password
 	#submitter.username =  sys.argv[11]
 	#submitter.password =  sys.argv[12]
+
 	submitter.server = 'https://' + os_utils.getenv_required('XNAT_PBS_JOBS_XNAT_SERVER')
 
 	# subject and project information
@@ -683,3 +684,4 @@ if __name__ == "__main__":
 	
 	#print ('Process terminated')
 	#sys.exit()	
+

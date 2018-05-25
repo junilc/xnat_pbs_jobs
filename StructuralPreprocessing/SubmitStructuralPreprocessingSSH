@@ -1,7 +1,7 @@
 #!/bin/bash
 
-source /export/HCP/bin/xnat_pbs_setup connectomedb
-# #source /export/HCP/bin/xnat_pbs_setup intradb
+#source /export/HCP/bin/xnat_pbs_setup connectomedb
+source /export/HCP/bin/xnat_pbs_setup intradb
 export PATH=/act/Anaconda3-2.3.0/bin:${PATH}
 
 if [ -z "${XNAT_PBS_JOBS}" ]; then
