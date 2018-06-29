@@ -15,36 +15,6 @@ source "${XNAT_PBS_JOBS}/shlib/log.shlib"
 source "${XNAT_PBS_JOBS}/shlib/utils.shlib"
 log_Msg "XNAT_PBS_JOBS: ${XNAT_PBS_JOBS}"
 
-# if [ -z "${NRG_PACKAGES}" ]; then
-	# log_Err_Abort "NRG_PACKAGES environment variable must be set"
-# else
-	# log_Msg "NRG_PACKAGES: ${NRG_PACKAGES}"
-# fi
-
-# if [ -z "${XNAT_PBS_JOBS_XNAT_SERVER}" ]; then
-	# log_Err_Abort "XNAT_PBS_JOBS_XNAT_SERVER environment variable must be set"
-# else
-	# log_Msg "XNAT_PBS_JOBS_XNAT_SERVER: ${XNAT_PBS_JOBS_XNAT_SERVER}"
-# fi
-
-# if [ -z "${XNAT_PBS_JOBS_ARCHIVE_ROOT}" ]; then
-	# log_Err_Abort "XNAT_PBS_JOBS_ARCHIVE_ROOT environment variable must be set"
-# else
-	# log_Msg "XNAT_PBS_JOBS_ARCHIVE_ROOT: ${XNAT_PBS_JOBS_ARCHIVE_ROOT}"
-# fi
-
-# if [ -z "${XNAT_UTILS_HOME}" ]; then
-	# log_Err_Abort "XNAT_UTILS_HOME environment variable must be set"
-# else
-	# log_Msg "XNAT_UTILS_HOME: ${XNAT_UTILS_HOME}"
-# fi
-
-# if [ -z "${XNAT_PBS_JOBS_PIPELINE_ENGINE}" ]; then
-	# log_Err_Abort "XNAT_PBS_JOBS_PIPELINE_ENGINE environment variable must be set"
-# else
-	# log_Msg "XNAT_PBS_JOBS_PIPELINE_ENGINE: ${XNAT_PBS_JOBS_PIPELINE_ENGINE}"
-# fi
-
 # Show script usage information
 usage()
 {
@@ -59,9 +29,6 @@ Usage: StructuralPreprocessingHCP.XNAT_PROCESS <options>
   Options: [ ] = optional, < > = user-supplied-value
 
   [--help] : show usage information and exit
-   --user=<username>        : XNAT DB username
-   --password=<password>    : XNAT DB password
-   --server=<server>        : XNAT server 
    --project=<project>      : XNAT project (e.g. HCP_500)
    --subject=<subject>      : XNAT subject ID within project (e.g. 100307)
    --session=<session>      : XNAT session ID within project (e.g. 100307_3T)
@@ -135,14 +102,10 @@ get_options()
 	local arguments=($@)
 
 	# initialize global output variables
-	unset g_user
-	unset g_password
-	unset g_server
 	unset g_project
 	unset g_subject
 	unset g_session
 	unset g_working_dir
-	# unset g_setup_script	
 
 	unset g_fieldmap_type
 	unset g_seed
@@ -199,18 +162,6 @@ get_options()
 				usage
 				exit 1
 				;;
-			# --user=*)
-				# g_user=${argument/*=/""}
-				# index=$(( index + 1 ))
-				# ;;
-			# --password=*)
-				# g_password=${argument/*=/""}
-				# index=$(( index + 1 ))
-				# ;;
-			# --server=*)
-				# g_server=${argument/*=/""}
-				# index=$(( index + 1 ))
-				# ;;
 			--project=*)
 				g_project=${argument/*=/""}
 				index=$(( index + 1 ))
@@ -231,10 +182,6 @@ get_options()
 				g_working_dir=${argument/*=/""}
 				index=$(( index + 1 ))
 				;;
-			# --setup-script=*)
-				# g_setup_script=${argument/*=/""}
-				# index=$(( index + 1 ))
-				# ;;
 			--fieldmap-type=*)
 				g_fieldmap_type=${argument/*=/""}
 				index=$(( index + 1 ))
@@ -357,26 +304,6 @@ get_options()
  	local error_count=0
 
  	# check parameters
- 	# if [ -z "${g_user}" ]; then
- 		# log_Err "user (--user=) required"
- 		# error_count=$(( error_count + 1 ))
- 	# else
- 		# log_Msg "user: ${g_user}"
- 	# fi
-
- 	# if [ -z "${g_password}" ]; then
- 		# log_Err "password (--password=) required"
- 		# error_count=$(( error_count + 1 ))
- 	# else
- 		# log_Msg "password: *******"
- 	# fi
-
-	# if [ -z "${g_server}" ]; then
-		# log_Err "server (--server=) required"
-		# error_count=$(( error_count + 1 ))
-	# else
-		# log_Msg "server: ${g_server}"
-	# fi
 
 	if [ -z "${g_project}" ]; then
 		log_Err "project (--project=) required"
@@ -412,13 +339,6 @@ get_options()
 	else
 		log_Msg "working directory: ${g_working_dir}"
 	fi
-	
-	# if [ -z "${g_setup_script}" ] ; then
-		# log_Err "setup script (--setup-script=) required"
-		# error_count=$(( error_count + 1 ))
-	# else
-		# log_Msg "setup script: ${g_setup_script}"
-	# fi
 	
 	if [ -z "${g_fieldmap_type}" ]; then
 		log_Err "fieldmap type (--fieldmap-type=) required"
@@ -805,16 +725,6 @@ do_gradient_echo_field_maps_exist()
 	fi
 }
 
-# get_scan_data() 
-# {
-	# local resource_name="${1}"
-	# local file_name="${2}"
-	# local item_name="${3}"
-
-	# local result=`${XNAT_UTILS_HOME}/xnat_scan_info -s "${XNAT_PBS_JOBS_XNAT_SERVER}" -u ${g_user} -p ${g_password} -pr ${g_project} -su ${g_subject} -se ${g_session} -r "${resource_name}" get_data -f "${file_name}" -i "${item_name}"`
-	# echo ${result}
-# }
-
 # Main processing
 main()
 {
@@ -830,8 +740,6 @@ main()
 	log_execution_info ${g_working_dir}/$(basename "${0}").execinfo
 
 	create_start_time_file ${g_working_dir} ${g_pipeline_name}
-
-	# source_script ${g_setup_script}
 
 	if [ -z "${HCPPIPEDIR}" ]; then
 		log_Err_Abort "HCPPIPEDIR environment variable must be set"
