@@ -960,6 +960,11 @@ main()
 	fi
 	popd
 
+	cp -rL ${g_working_dir}/${g_subject}/T1w/fsaverage ${g_working_dir}/${g_subject}/T1w/fsaverage1
+	rm ${g_working_dir}/${g_subject}/T1w/fsaverage
+	mv ${g_working_dir}/${g_subject}/T1w/fsaverage1 ${g_working_dir}/${g_subject}/T1w/fsaverage
+	
+	
 	log_Msg "Complete"
 }
 
