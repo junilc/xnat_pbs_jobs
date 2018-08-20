@@ -111,7 +111,6 @@ class BatchSubmitter(batch_submitter.BatchSubmitter):
 
 			print("-----")
 
-
 def do_submissions(userid, password, subject_list, force_job_submissions=False):
 
 	# read the configuration file
