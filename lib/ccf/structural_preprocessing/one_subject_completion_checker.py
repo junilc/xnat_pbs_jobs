@@ -7,9 +7,7 @@ import sys
 # import of third-party modules
 
 # import of local modules
-import ccf.archive as ccf_archive
 import ccf.one_subject_completion_checker as one_subject_completion_checker
-import ccf.structural_preprocessing.one_subject_job_submitter as one_subject_job_submitter
 import ccf.subject as ccf_subject
 import utils.my_argparse as my_argparse
 
@@ -24,27 +22,14 @@ class OneSubjectCompletionChecker(one_subject_completion_checker.OneSubjectCompl
 	def __init__(self):
 		super().__init__()
 
-	@property
-	def PIPELINE_NAME(self):
-		return one_subject_job_submitter.OneSubjectJobSubmitter.MY_PIPELINE_NAME()
-	
-	# def my_resource(self, archive, subject_info):
-		# return archive.structural_preproc_dir_full_path(subject_info)
+	def my_resource(self, subject_info):
+		cwd = os.getcwd()
+		return cwd
 
-	def my_resource(self, archive, subject_info):
-		if "SINGULARITY_CONTAINER" in os.environ: 
-			return os.environ["XNAT_PBS_JOBS_ARCHIVE_ROOT"]
-		else:
-			return archive.structural_preproc_dir_full_path(subject_info)
-			
-	def my_prerequisite_dir_full_paths(self, archive, subject_info):
-		return archive.available_structural_unproc_dir_full_paths(subject_info)
-	
-	def list_of_expected_files(self, archive, subject_info):
+	def list_of_expected_files(self, subject_info):
+		subj_dir = os.sep.join([self.my_resource(subject_info), subject_info.subject_id])
 
 		l = []
-
-		subj_dir = os.sep.join([self.my_resource(archive, subject_info), subject_info.subject_id])
 
 		l.append(os.sep.join([subj_dir, 'MNINonLinear']))
 		l.append(os.sep.join([subj_dir, 'MNINonLinear', 'aparc.a2009s+aseg.nii.gz']))
@@ -1243,7 +1228,6 @@ class OneSubjectCompletionChecker(one_subject_completion_checker.OneSubjectCompl
 		
 		return l
 
-
 if __name__ == "__main__":
 
 	parser = my_argparse.MyArgumentParser(
@@ -1260,13 +1244,10 @@ if __name__ == "__main__":
 	parser.add_argument('-o', '--output', dest='output', required=False, type=str)
 	parser.add_argument('-a', '--check-all', dest='check_all', action='store_true',
 						required=False, default=False)
-	parser.add_argument('-m', '--marked', dest='marked', action='store_true',
-						required=False, default=False)
 	# parse the command line arguments
 	args = parser.parse_args()
   
 	# check the specified subject for structural preprocessing completion
-	archive = ccf_archive.CcfArchive()
 	subject_info = ccf_subject.SubjectInfo(args.project, args.subject, args.classifier)
 	completion_checker = OneSubjectCompletionChecker()
 
@@ -1275,22 +1256,13 @@ if __name__ == "__main__":
 	else:
 		processing_output = sys.stdout
 
-	if args.marked:
-		if completion_checker.is_processing_marked_complete(archive=archive, subject_info=subject_info):
-			print("Exiting with 0 code - Marked Completion Check Successful")
-			exit(0)
-		else:
-			print("Exiting with 1 code - Marked Completion Check Unsuccessful")
-			exit(1)
+	if completion_checker.is_processing_complete(
+			subject_info=subject_info,
+			verbose=args.verbose,
+			output=processing_output,
+			short_circuit=not args.check_all):
+		print("Exiting with 0 code - Completion Check Successful")
+		exit(0)
 	else:
-		if completion_checker.is_processing_complete(
-				archive=archive,
-				subject_info=subject_info,
-				verbose=args.verbose,
-				output=processing_output,
-				short_circuit=not args.check_all):
-			print("Exiting with 0 code - Completion Check Successful")
-			exit(0)
-		else:
-			print("Exiting with 1 code - Completion Check Unsuccessful")
-			exit(1)
+		print("Exiting with 1 code - Completion Check Unsuccessful")
+		exit(1)

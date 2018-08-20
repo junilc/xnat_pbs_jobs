@@ -262,7 +262,7 @@ main()
 
 	# clean up
 	if [ "${check_cmd_ret_code}" -eq 0 ]; then
-	    rm -rf ${g_working_dir}
+		rm -rf ${g_working_dir}
 	fi
 	
 	log_Msg "Complete"

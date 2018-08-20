@@ -7,8 +7,6 @@ import sys
 # import of third-party modules
 
 # import of local modules
-import ccf.archive as ccf_archive
-import ccf.functional_preprocessing.one_subject_job_submitter as one_subject_job_submitter
 import ccf.one_subject_completion_checker as one_subject_completion_checker
 import ccf.subject as ccf_subject
 import utils.my_argparse as my_argparse
@@ -24,37 +22,17 @@ class OneSubjectCompletionChecker(one_subject_completion_checker.OneSubjectCompl
 	def __init__(self):
 		super().__init__()
 
-	@property
-	def PIPELINE_NAME(self):
-		return one_subject_job_submitter.OneSubjectJobSubmitter.MY_PIPELINE_NAME()
+	def my_resource(self, subject_info):
+		cwd = os.getcwd()
+		return cwd
 
-	# def my_resource(self, archive, subject_info):
-		# return archive.functional_preproc_dir_full_path(subject_info)
-	
-	def my_resource(self, archive, subject_info):
-		if "SINGULARITY_CONTAINER" in os.environ: 
-			return os.environ["XNAT_PBS_JOBS_ARCHIVE_ROOT"]
-		else:
-			return archive.functional_preproc_dir_full_path(subject_info)	
-
-	# def my_prerequisite_dir_full_paths(self, archive, subject_info):
-		# dirs = []
-		# dirs.append(archive.structural_preproc_dir_full_path(subject_info))
-		# return dirs
-		
-	def my_prerequisite_dir_full_paths(self, archive, subject_info):
-		dirs = []
-		if "SINGULARITY_CONTAINER" not in os.environ: 
-			dirs.append(archive.structural_preproc_dir_full_path(subject_info))
-		return dirs
-
-	def list_of_expected_files(self, archive, subject_info):
+	def list_of_expected_files(self, subject_info):
 
 		l = []
 
 		scan = subject_info.extra
 
-		root_dir = os.sep.join([self.my_resource(archive, subject_info), subject_info.subject_id])
+		root_dir = os.sep.join([self.my_resource(subject_info), subject_info.subject_id])
 
 		l.append(os.sep.join([root_dir, 'MNINonLinear']))
 		l.append(os.sep.join([root_dir, 'MNINonLinear', 'Results']))
@@ -350,7 +328,6 @@ if __name__ == "__main__":
 	args = parser.parse_args()
 
 	# check the specified subject and scan for functional preprocessing completion
-	archive = ccf_archive.CcfArchive()
 	subject_info = ccf_subject.SubjectInfo(
 		project=args.project,
 		subject_id=args.subject,
@@ -364,7 +341,6 @@ if __name__ == "__main__":
 		processing_output = sys.stdout
 
 	if completion_checker.is_processing_complete(
-			archive=archive,
 			subject_info=subject_info,
 			verbose=args.verbose,
 			output=processing_output,
@@ -374,8 +350,3 @@ if __name__ == "__main__":
 	else:
 		print("Existing wih 1 code - Completion Check Unsuccessful")
 		exit(1)
-
-
-
-
-

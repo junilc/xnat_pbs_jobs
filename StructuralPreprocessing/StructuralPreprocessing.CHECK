@@ -10,12 +10,6 @@ source "${XNAT_PBS_JOBS}/shlib/log.shlib"  # Logging related functions
 source "${XNAT_PBS_JOBS}/shlib/utils.shlib"  # Utility functions
 log_Msg "XNAT_PBS_JOBS: ${XNAT_PBS_JOBS}"
 
-# if [ -z "${XNAT_PBS_JOBS_ARCHIVE_ROOT}" ]; then
-	# log_Err_Abort "XNAT_PBS_JOBS_ARCHIVE_ROOT environment variable must be set"
-# else
-	# log_Msg "XNAT_PBS_JOBS_ARCHIVE_ROOT: ${XNAT_PBS_JOBS_ARCHIVE_ROOT}"
-# fi
-
 usage()
 {
 	cat <<EOF
@@ -26,9 +20,9 @@ Usage: ${g_script_name} PARAMETER..."
 
 PARAMETERs are [ ] = optional; < > = user supplied value
   [--help]                   : show usage information and exit with non-zero return code
-   --project=<project>       : XNAT project (e.g. HCP_500)
-   --subject=<subject>       : XNAT subject ID within project (e.g. 100307)
-   --classifier=<classifier> : XNAT session classifier (e.g. 3T, 7T, MR, V1, V2, etc.)
+   --project=<project>       : project (e.g. HCP_500)
+   --subject=<subject>       : subject ID within project (e.g. 100307)
+   --classifier=<classifier> : session classifier (e.g. 3T, 7T, MR, V1, V2, etc.)
    --working-dir=<dir>       : Working directory in which to place retrieved data
                                and in which to produce results
 
