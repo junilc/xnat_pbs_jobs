@@ -21,15 +21,13 @@ usage()
 	cat <<EOF
 
 Run the HCP Structural Preprocessing pipeline scripts (PreFreeSurferPipeline.sh, 
-FreeSurferPipeline.sh, and PostFreeSurferPipeline.sh) in an XNAT-aware and
-XNAT-pipeline-like manner.
+FreeSurferPipeline.sh, and PostFreeSurferPipeline.sh) within a Singularity Container.
 
-Usage: StructuralPreprocessingHCP.XNAT_PROCESS <options>
+Usage: StructuralPreprocessingHCP.SINGULARITY_PROCESS <options>
 
   Options: [ ] = optional, < > = user-supplied-value
 
   [--help] : show usage information and exit
-   --project=<project>      : XNAT project (e.g. HCP_500)
    --subject=<subject>      : XNAT subject ID within project (e.g. 100307)
    --session=<session>      : XNAT session ID within project (e.g. 100307_3T)
    --working-dir=<dir>      : Working directory in which to place retrieved data
@@ -102,7 +100,7 @@ get_options()
 	local arguments=($@)
 
 	# initialize global output variables
-	unset g_project
+#	unset g_project
 	unset g_subject
 	unset g_session
 	unset g_working_dir
@@ -162,10 +160,10 @@ get_options()
 				usage
 				exit 1
 				;;
-			--project=*)
-				g_project=${argument/*=/""}
-				index=$(( index + 1 ))
-				;;
+			# --project=*)
+			# 	g_project=${argument/*=/""}
+			# 	index=$(( index + 1 ))
+			# 	;;
 			--subject=*)
 				g_subject=${argument/*=/""}
 				index=$(( index + 1 ))
@@ -305,12 +303,12 @@ get_options()
 
  	# check parameters
 
-	if [ -z "${g_project}" ]; then
-		log_Err "project (--project=) required"
-		error_count=$(( error_count + 1 ))
-	else
-		log_Msg "project: ${g_project}"
-	fi
+	# if [ -z "${g_project}" ]; then
+	# 	log_Err "project (--project=) required"
+	# 	error_count=$(( error_count + 1 ))
+	# else
+	# 	log_Msg "project: ${g_project}"
+	# fi
 
 	if [ -z "${g_subject}" ]; then
 		log_Err "subject (--subject=) required"
@@ -560,6 +558,11 @@ does_resource_exist()
 
 does_first_t1w_scan_exist()
 {
+	echo "DEBUG: ICI: does_first_t1w_scan_exist"
+	echo "DEBUG: ICI: g_first_t1w_resource_name: ${g_first_t1w_resource_name}"
+
+	exit
+
 	local does_it_exist
 	if [ -z "${g_first_t1w_resource_name}" ]; then
 		does_it_exist="FALSE"
