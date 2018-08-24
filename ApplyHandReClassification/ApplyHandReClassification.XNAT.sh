@@ -197,7 +197,8 @@ main()
 
 	# Create a start_time file
 	inform "Create a start time file"
-	start_time_file=${g_working_dir}/${g_pipeline_name}.starttime
+	mkdir -p "${g_working_dir}/${g_subject}/ProcessingInfo"
+	start_time_file=${g_working_dir}/${g_subject}/ProcessingInfo/${g_pipeline_name}.starttime
 	if [ -e "${start_time_file}" ]; then
 		inform "Removing old ${start_time_file}"
 		rm -f ${start_time_file}

@@ -56,7 +56,10 @@ class OneSubjectCompletionXnatChecker(one_subject_completion_checker.OneSubjectC
 
 		resource_path = self.my_resource(subject_info)
 		completion_marker_file_path = resource_path + os.sep + self.completion_marker_file_name()
-		starttime_marker_file_path = resource_path + os.sep + self.starttime_marker_file_name()
+		starttime_marker_file_path = resource_path + os.sep + \
+									 subject_info.subject_id + os.sep + \
+									 "ProcessingInfo" + os.sep + \
+									 self.starttime_marker_file_name()
 		
 		# If the completion marker file does not exist, the the processing is certainly not marked
 		# as complete.

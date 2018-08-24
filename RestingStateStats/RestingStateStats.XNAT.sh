@@ -424,8 +424,9 @@ main()
 	#step_percent=$(( (current_step * 100) / total_steps ))
 
 	#update_xnat_workflow ${current_step} "Create a start_time file" ${step_percent}
-	
-	start_time_file="${g_working_dir}/RestingStateStats.starttime"
+
+	mkdir -p "${g_working_dir}/${g_subject}/ProcessingInfo"
+	start_time_file="${g_working_dir}/${g_subject}/ProcessingInfo/RestingStateStats.starttime"
 	if [ -e "${start_time_file}" ]; then
 		inform "Removing old ${start_time_file}"
 		rm -f ${start_time_file}

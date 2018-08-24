@@ -159,7 +159,7 @@ main()
 
 	get_options "$@"
 
-	create_start_time_file ${g_working_dir} ${g_pipeline_name}
+	create_start_time_file ${g_working_dir} ${g_pipeline_name} ${g_subject}
 
 	source_script ${g_setup_script}
 

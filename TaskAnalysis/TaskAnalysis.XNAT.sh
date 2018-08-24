@@ -417,8 +417,9 @@ main()
 	# ----------------------------------------------------------------------------------------------
 	increment_step
 	update_xnat_workflow ${g_current_step} "Create a start_time file" ${g_step_percent}
-	
-	start_time_file="${g_working_dir}/TaskAnalysis.starttime"
+
+	mkdir -p "${g_working_dir}/${g_subject}/ProcessingInfo"
+	start_time_file="${g_working_dir}/${g_subject}/ProcessingInfo/TaskAnalysis.starttime"
 	if [ -e "${start_time_file}" ]; then
 		echo "Removing old ${start_time_file}"
 		rm -f ${start_time_file}
@@ -702,7 +703,7 @@ main()
 #	update_xnat_workflow ${g_current_step} "Remove files not newly created or modified" ${g_step_percent}
 #
 #	echo "The following files are being removed"
-#	find ${g_working_dir} -not -newer ${start_time_file} -print -delete 
+#	find ${g_working_dir}/${g_subject} -not -newer ${start_time_file} -print -delete 
 	
 	# ----------------------------------------------------------------------------------------------
 	# Step - Complete Workflow

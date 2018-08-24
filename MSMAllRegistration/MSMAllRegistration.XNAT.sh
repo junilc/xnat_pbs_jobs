@@ -438,8 +438,9 @@ main()
 	# ----------------------------------------------------------------------------------------------
 	increment_step
 	update_xnat_workflow ${g_current_step} "Create a start_time file" ${g_step_percent}
-	
-	start_time_file="${g_working_dir}/MSMAll.starttime"
+
+	mkdir -p "${g_working_dir}/${g_subject}/ProcessingInfo"
+	start_time_file="${g_working_dir}/${g_subject}/ProcessingInfo/MSMAll.starttime"
 	if [ -e "${start_time_file}" ]; then
 		echo "Removing old ${start_time_file}"
 		rm -f ${start_time_file}
