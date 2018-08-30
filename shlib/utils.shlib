@@ -43,8 +43,7 @@ create_start_time_file()
 	# Sleep for 1 minute to make sure start time file is created at
 	# least a minute after any file previously retrieved
 	log_Msg "Sleep for 1 minute before creating start time file."
-	# sleep 1m || log_Err_Abort "Unable to sleep before creating start time file"
-	sleep 1s || log_Err_Abort "Unable to sleep before creating start time file"
+	sleep 1m || log_Err_Abort "Unable to sleep before creating start time file"
 
 	log_Msg "Creating start time file: ${start_time_file}"
 	touch ${start_time_file} || log_Err_Abort "Unable to touch start time file"
@@ -54,8 +53,7 @@ create_start_time_file()
 	# processing scripts are created at least 1 minute after creating
 	# the start time file
 	log_Msg "Sleep for 1 minute after creating start time file."
-	# sleep 1m || log_Err_Abort "Unable to sleep after creating start time file"
-	sleep 1s || log_Err_Abort "Unable to sleep after creating start time file"
+	sleep 1m || log_Err_Abort "Unable to sleep after creating start time file"
 }
 
 source_script()
